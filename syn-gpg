@@ -1,4 +1,5 @@
 #!/bin/bash
+# GNU GPLv3 Paul Tagliamonte (paultag)
 
 KEYRING=/usr/share/syn-keyring/core-keyring
 
