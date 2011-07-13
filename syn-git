@@ -7,7 +7,6 @@ usage() {
 	echo "   create [packagename]"
 	echo "   new-upstream [tarball]"
 	echo "   push [git-args]"
-	echo "   manly-push [git-args]"
 	echo ""
 	exit 1
 }
