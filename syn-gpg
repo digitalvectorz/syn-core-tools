@@ -2,4 +2,4 @@
 
 KEYRING=/usr/share/syn-keyring/core-keyring
 
-gpg --no-default-keyring --keyring $KEYRING
+gpg --no-default-keyring --keyring $KEYRING $@
