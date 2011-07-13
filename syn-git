@@ -1,0 +1,74 @@
+#!/bin/bash
+
+usage() {
+	echo "Usage: syn-git [method]"
+	echo "  methods:"
+	echo ""
+	echo "   create [packagename]"
+	echo "   new-upstream [tarball]"
+	echo ""
+	exit 1
+}
+
+init() {
+	if [ $# -lt 1 ]; then
+		usage
+	fi
+	echo "creating new syn git repo for pkg: $1"
+	mkdir $1
+	cd $1
+	git init
+	cp /usr/share/syn/synd-template/* .
+	git add *
+	git commit -m "importing initial synd data."
+	git symbolic-ref HEAD refs/heads/upstream
+	rm .git/index 
+	git clean -fdx 
+	touch DEADBEEF
+	git add DEADBEEF
+	git commit -m "importing initial upstream branch."
+	git checkout master
+}
+
+new_upstream() {
+	if [ $# -lt 1 ]; then
+		usage
+	fi
+	PKGNM=`basename $1 .tar.gz` # XXX: Fixme for non targz
+	PACKAGE=`echo $PKGNM | sed 's/-[^-]\+$//'`
+	VERSION=`echo $PKGNM | sed s/$PACKAGE-//`
+
+	echo "New tagname: upstream/$VERSION"
+	echo "Hit enter to approve."
+	read foo
+
+	git checkout upstream
+	rm -rf *
+	git_root=$(basename `pwd`)
+	targz="`pwd`/$1"
+	cd ..
+	tar --transform s,^.[^/]*/,$git_root/, -xzvf $targz
+	cd $git_root
+	git add -A
+	git commit -m "New upstream version: upstream/$VERSION"
+	git tag -a upstream/$VERSION -m "Tagging: upstream/$VERSION"
+	pristine-tar commit $1 upstream/$VERSION
+	git checkout master
+}
+
+if [ $# -lt 1 ]; then
+	usage
+fi
+
+case $1 in
+	[create]*)
+	init $2
+	;;
+	[new-upstream]*)
+	new_upstream $2
+	;;
+	*)
+	usage
+	;;
+esac
+
