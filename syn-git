@@ -19,7 +19,10 @@ init() {
 	mkdir $1
 	cd $1
 	git init
+	mkdir synd/
+	cd synd/
 	cp /usr/share/syn/synd-template/* .
+	cd ..
 	git add *
 	git commit -m "importing initial synd data."
 	git symbolic-ref HEAD refs/heads/upstream
